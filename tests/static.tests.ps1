@@ -35,7 +35,7 @@ Assert-True ($config.Backup.Enabled -and $config.Backup.VerifyHashes -and $confi
 Assert-True ($config.Versions.Mode -eq 'Latest' -and $config.Versions.CaptureKnownGood) 'O perfil deve buscar versoes atuais e capturar o estado conhecido como bom.'
 
 $debloatScript = Get-Content -Raw -LiteralPath (Join-Path $root 'scripts\50-debloat-akita.ps1')
-Assert-True ($debloatScript -match "'-RunDefaults', '-Silent', '-AppRemovalTarget'") 'O wrapper deve aplicar o preset fixo de forma silenciosa.'
+Assert-True ($debloatScript -match 'RunDefaults\s*=\s*\$true' -and $debloatScript -match 'AppRemovalTarget\s*=\s*\[string\]\$debloat\.AppRemovalTarget' -and $debloatScript -match '\$invocationParameters\.Silent\s*=\s*\$true') 'O wrapper deve usar parametros nomeados para aplicar o preset fixo de forma silenciosa.'
 Assert-True ($config.Debloat.ArchiveSha256 -eq 'e97c8e36698c7b543da0b77cc34439c1a0b4917525b45a9d1ae7a02e23d4711d') 'O ZIP revisado do debloat deve ter SHA-256 fixo.'
 
 $basePackages = Get-Content -LiteralPath (Join-Path $root 'config\packages\base.txt') | Where-Object { $_ -and -not $_.StartsWith('#') }

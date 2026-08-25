@@ -56,10 +56,14 @@ try {
     if (-not $scriptFile) { throw 'Win11Debloat.ps1 nao foi encontrado no arquivo validado.' }
     Get-ChildItem -LiteralPath $scriptFile.Directory.FullName -Recurse -File | Unblock-File
 
-    $arguments = @('-RunDefaults', '-Silent', '-AppRemovalTarget', [string]$debloat.AppRemovalTarget)
-    if ($debloat.RemoveGamingApps) { $arguments += '-RemoveGamingApps' }
+    $invocationParameters = @{
+        RunDefaults      = $true
+        AppRemovalTarget = [string]$debloat.AppRemovalTarget
+    }
+    if ($debloat.Silent) { $invocationParameters.Silent = $true }
+    if ($debloat.RemoveGamingApps) { $invocationParameters.RemoveGamingApps = $true }
     Write-Host "[APLICAR] Win11Debloat $($debloat.Preset), alvo $($debloat.AppRemovalTarget), RemoveGamingApps=$([bool]$debloat.RemoveGamingApps)." -ForegroundColor Yellow
-    & $scriptFile.FullName @arguments
+    & $scriptFile.FullName @invocationParameters
     if ($LASTEXITCODE -and $LASTEXITCODE -ne 0) { throw "Win11Debloat terminou com codigo $LASTEXITCODE." }
 }
 finally {
